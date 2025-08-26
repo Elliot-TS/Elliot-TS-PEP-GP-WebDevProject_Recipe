@@ -81,7 +81,7 @@ async function processRegistration() {
             };
 
             // Submit the data
-            const request = await fetch(`http://localhost:8081/register`, requestOptions);
+            const request = await fetch(`${BASE_URL}/register`, requestOptions);
 
             // Check the status of the request
             switch (request.status) {
