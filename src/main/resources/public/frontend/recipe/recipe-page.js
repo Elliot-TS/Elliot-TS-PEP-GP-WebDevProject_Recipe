@@ -42,14 +42,14 @@ window.addEventListener("DOMContentLoaded", () => {
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
     if (sessionStorage.getItem("auth-token")) {
-        logoutButton.display = "block";
+        logoutButton.style = "display:block";
     }
 
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
-    if (sessionStorage.getItem("is-admin")) {
-        adminLink.display = "block";
+    if (sessionStorage.getItem("is-admin") === "true") {
+        adminLink.style = "display:block";
     } 
 
     /*
@@ -64,14 +64,12 @@ window.addEventListener("DOMContentLoaded", () => {
     updateRecipeForm.submit.addEventListener("click", updateRecipe);
     deleteRecipeForm.submit.addEventListener("click", deleteRecipe);
     searchForm.submit.addEventListener("click", searchRecipes);
-    logoutButton.addEventListener("clicl", processLogout);
+    logoutButton.addEventListener("click", processLogout);
 
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
-    console.log("oops");
     getRecipes();
-
 
     /**
      * TODO: Search Recipes Function
@@ -85,7 +83,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const recipeName = searchForm.name.value;
 
         // Get the recipe name
-        await getRecipes(false);
+        await getRecipes(true);
 
         // Filter list by search name
         recipes = recipes.filter(recipe => recipe.name.search(recipeName) != -1);
@@ -262,16 +260,17 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         // Fetch current recipes to locate the recipe by name
-        /*await getRecipes();
+        await getRecipes();
         const recipe = recipes.find(r => r.name === recipeName);
         console.log(recipe);
         // If no such recipe exists, warn the user
         if (recipe === undefined) {
             alert("Cannot delete recipe.  No recipe with that name exists");
             return;
-        }*/
+        }
 
         // Create the request
+        console.log(sessionStorage.getItem("auth-token"));
         const requestOptions = {
             method: "DELETE",
             mode: "cors",
@@ -289,7 +288,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Add the new recipe
-            const response = await fetch(`${BASE_URL}/recipes/${6}`, requestOptions);
+            const response = await fetch(`${BASE_URL}/recipes/${recipe.id}`, requestOptions);
 
             switch (response.status) {
                 case 200:
@@ -318,7 +317,7 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Store in recipes array
      * - Call refreshRecipeList() to display
      */
-    async function getRecipes(refresh) {
+    async function getRecipes(noRefresh) {
         const requestOptions = {
             method: "GET",
             mode: "cors",
@@ -339,7 +338,9 @@ window.addEventListener("DOMContentLoaded", () => {
             recipes = await response.json();
             
             // Update the list of recipes
-            if (refresh) refreshRecipeList();
+            if (!noRefresh) { 
+                refreshRecipeList();
+            }
         }
         catch (e) {
             console.log(e);
@@ -378,7 +379,42 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On failure: alert the user
      */
     async function processLogout() {
-        // Implement logout logic here
+        const requestOptions = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+            }
+        };
+
+        try {
+            // Logout
+            const response = await fetch(`${BASE_URL}/logout`, requestOptions);
+            
+            // If there was an error logging out, report
+            if (!response.ok) {
+                console.log(response);
+                alert("Something went wrog logging out");
+                return;
+            }
+            
+            // Clear session storage
+            sessionStorage.removeItem("auth-key");
+            sessionStorage.removeItem("is-admin");
+            
+            // Redirect to login
+            setTimeout(function() {
+                location.href = "../login/login-page.html";
+            }, 500);
+        }
+        catch (e) {
+            console.log(e);
+            alert("Unexpected error logging out: " + e);
+        }
     }
 
 });
