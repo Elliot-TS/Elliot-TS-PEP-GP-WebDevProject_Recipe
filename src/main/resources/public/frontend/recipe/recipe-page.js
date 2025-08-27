@@ -223,7 +223,7 @@ window.addEventListener("DOMContentLoaded", () => {
             listItem.innerText = `${recipe.name}: ${recipe.instructions}`;
 
             // Add the item to the list
-            searchForm.resultList.appendChildd(listItem);
+            searchForm.resultList.appendChild(listItem);
         }
     }
 
