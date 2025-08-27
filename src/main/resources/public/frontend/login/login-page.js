@@ -105,8 +105,8 @@ async function processLogin() {
                         location.replace("../recipe/recipe-page.html");
                     }, 500);
                 const [token, isAdmin] = (await response.text()).split(" ");
-                sessionStorage.setItem("token", token);
-                sessionStorage.setItem("isAdmin", isAdmin);
+                sessionStorage.setItem("auth-token", token);
+                sessionStorage.setItem("is-admin", isAdmin);
                 break;
             case 401:
                 alert("Incorrect login!");

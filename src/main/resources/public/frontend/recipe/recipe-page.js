@@ -16,14 +16,41 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Admin link and logout button
      * - Search input
     */
+    const adminLink = document.getElementById("admin-link");
+    const logoutButton = document.getElementById("logout-button");
+    const searchForm = {
+        name: document.getElementById("search-input"),
+        submit: document.getElementById("search-button"),
+        resultList: document.getElementById("recipe-list")
+    };
+    const addRecipeForm = {
+        name: document.getElementById("add-recipe-name-input"),
+        instructions: document.getElementById("add-recipe-instructions-input"),
+        submit: document.getElementById("add-recipe-submit-input")
+    };
+    const updateRecipeForm = {
+        name: document.getElementById("update-recipe-name-input"),
+        instructions: document.getElementById("update-recipe-instructions-input"),
+        submit: document.getElementById("update-recipe-submit-input")
+    };
+    const deleteRecipeForm = {
+        name: document.getElementById("delete-recipe-name-input"),
+        submit: document.getElementById("delete-recipe-submit-input")
+    };
 
     /*
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
+    if (sessionStorage.getItem("auth-token")) {
+        logoutButton.display = "block";
+    }
 
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
+    if (sessionStorage.getItem("is-admin")) {
+        adminLink.display = "block";
+    } 
 
     /*
      * TODO: Attach event handlers
@@ -33,10 +60,16 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Search button → searchRecipes()
      * - Logout button → processLogout()
      */
+    addRecipeForm.submit.addEventListener("click", addRecipe);
+    updateRecipeForm.submit.addEventListener("click", updateRecipe);
+    deleteRecipeForm.submit.addEventListener("click", deleteRecipe);
+    searchForm.submit.addEventListener("click", searchRecipes);
+    logoutButton.addEventListener("clicl", processLogout);
 
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
+    getRecipes();
 
 
     /**
@@ -47,7 +80,41 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Handle fetch errors and alert user
      */
     async function searchRecipes() {
-        // Implement search logic here
+        // Get the recipe name
+        const recipeName = searchForm.name.value;
+        
+        const requestOptions = {
+            method: "GET",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(requestBody)
+        };
+
+        try {
+            // Get list of all recipes
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            // Filter list by search name
+            let recipes = await response.json();
+            recipes.filter(recipe => recipe.name.search(recipeName) != -1);
+
+            // Update the list of recipes
+            refreshRecipeList(recipes);
+
+        }
+        catch (e) {
+            console.log(e);
+            alert("An unexpected error occurred while loading recipes");
+        }
     }
 
     /**
@@ -101,7 +168,7 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Create <li> elements for each recipe with name + instructions
      * - Append to list container
      */
-    function refreshRecipeList() {
+    function refreshRecipeList(recipes) {
         // Implement refresh logic here
     }
 

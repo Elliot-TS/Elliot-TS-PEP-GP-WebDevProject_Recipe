@@ -1,7 +1,7 @@
-commit a503c142dfba09ac775e3bc02cc6f42ad0c5c5f3
+commit 6f1e570ed92c728ca5a597d1b026d96157bf3910
 Author: Elliot-TS Swaim <elliotbb@believershome.com>
-Date:   Wed Aug 27 00:26:39 2025 +0000
+Date:   Wed Aug 27 00:43:09 2025 +0000
 
-    Working on login
+    2: LoginTest passes
 
- 8 files changed, 119 insertions(+), 10 deletions(-)
+ 3 files changed, 12 insertions(+), 18 deletions(-)
