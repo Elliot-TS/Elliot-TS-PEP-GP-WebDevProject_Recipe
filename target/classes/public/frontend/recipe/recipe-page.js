@@ -69,7 +69,8 @@ window.addEventListener("DOMContentLoaded", () => {
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
-    //getRecipes();
+    console.log("oops");
+    getRecipes();
 
 
     /**
@@ -82,35 +83,15 @@ window.addEventListener("DOMContentLoaded", () => {
     async function searchRecipes() {
         // Get the recipe name
         const recipeName = searchForm.name.value;
-        
-        const requestOptions = {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "Access-Control-Allow-Headers": "*",
-                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
-            }
-        };
 
-        try {
-            // Get list of all recipes
-            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+        // Get the recipe name
+        await getRecipes();
 
-            // Filter list by search name
-            let recipes = await response.json();
+        // Filter list by search name
+        recipes = recipes.filter(recipe => recipe.name.search(recipeName) != -1);
             
-            // Update the list of recipes
-            refreshRecipeList(
-                recipes.filter(recipe => recipe.name.search(recipeName) != -1)
-            );
-        }
-        catch (e) {
-            console.log(e);
-            alert("An unexpected error occurred while loading recipes");
-        }
+        // Update the list of recipes
+        refreshRecipeList();
     }
 
     /**
@@ -124,7 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
     async function addRecipe() {
         // Get the recipe name and instructions
         const recipeName = addRecipeForm.name.value;
-        const recipeInstructions = addRecipeForm.instructions.innerText;
+        const recipeInstructions = addRecipeForm.instructions.value;
         
         // Validate inputs are non-empty
         if (recipeName.trim() === "") {
@@ -137,6 +118,10 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         
         // Create the request
+        const requestBody = {
+            name: recipeName,
+            instructions: recipeInstructions
+        };
         const requestOptions = {
             method: "POST",
             mode: "cors",
@@ -146,7 +131,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*",
-                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`
             },
             redirect: "follow",
             referrerPolicy: "no-referrer",
@@ -157,13 +142,21 @@ window.addEventListener("DOMContentLoaded", () => {
             // Add the new recipe
             const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
 
-            // Filter list by search name
-            let recipes = await response.json();
-            recipes.filter(recipe => recipe.name.search(recipeName) != -1);
+            switch (response.status) {
+                case 201:
+                    // Clear input fields
+                    addRecipeForm.name.value = "";
+                    addRecipeForm.instructions.value = "";
 
-            // Update the list of recipes
-            refreshRecipeList(recipes);
-
+                    // Refresh the list of recipes
+                    searchRecipes();
+                    
+                    break;
+                default:
+                    console.log(response);
+                    alert("Error adding new recipe.\nRequest returned with status " + response.status);
+                    break;
+            }
         }
         catch (e) {
             console.log(e);
@@ -201,7 +194,32 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Call refreshRecipeList() to display
      */
     async function getRecipes() {
-        // Implement get logic here
+        const requestOptions = {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+            }
+        };
+
+        try {
+            // Get list of all recipes
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            // Populate the list of recipes
+            recipes = await response.json();
+            
+            // Update the list of recipes
+            refreshRecipeList();
+        }
+        catch (e) {
+            console.log(e);
+            alert("An unexpected error occurred while loading recipes");
+        }
     }
 
     /**
@@ -210,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Create <li> elements for each recipe with name + instructions
      * - Append to list container
      */
-    function refreshRecipeList(recipes) {
+    function refreshRecipeList() {
         // Clear the recipe lsit
         searchForm.resultList.innerHTML = "";
 
