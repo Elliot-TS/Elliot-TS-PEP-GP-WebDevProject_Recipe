@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const recipeName = searchForm.name.value;
 
         // Get the recipe name
-        await getRecipes();
+        await getRecipes(false);
 
         // Filter list by search name
         recipes = recipes.filter(recipe => recipe.name.search(recipeName) != -1);
@@ -160,7 +160,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         catch (e) {
             console.log(e);
-            alert("An unexpected error occurred while loading recipes");
+            alert("An unexpected error occurred while adding recipes");
         }
     }
 
@@ -173,7 +173,75 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function updateRecipe() {
-        // Implement update logic here
+        // Get values from update form inputs
+        const recipeName = updateRecipeForm.name.value;
+        const recipeInstructions = updateRecipeForm.instructions.value;
+
+        // Validate neither field is empty
+        if (recipeName.trim() === "") {
+            alert("Update name field cannot be empty");
+            return;
+        }
+        else if (recipeInstructions.trim() === "") {
+            alert("Update instructions field cannot be emtpy");
+            return;
+        }
+
+        // Fetch current recipes to locate the recipe by name
+        await getRecipes();
+        const recipe = recipes.find(r => r.name === recipeName);
+
+        // If no such recipe exists, warn the user
+        if (recipe === undefined) {
+            alert("Cannot update recipe.  No recipe with that name exists");
+            return;
+        }
+
+        // Create the request
+        const requestBody = {
+            id: recipe.id,
+            instructions: recipeInstructions
+        };
+        const requestOptions = {
+            method: "PUT",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(requestBody)
+        };
+
+        try {
+            // Add the new recipe
+            const response = await fetch(`${BASE_URL}/recipes/${recipe.id}`, requestOptions);
+
+            switch (response.status) {
+                case 200:
+                    // Clear input fields
+                    updateRecipeForm.name.value = "";
+                    updateRecipeForm.instructions.value = "";
+
+                    // Refresh the list of recipes
+                    searchRecipes();
+                    
+                    break;
+                default:
+                    console.log(response);
+                    alert("Error updating recipe.\nRequest returned with status " + response.status);
+                    break;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            alert("An unexpected error occurred while updating recipes");
+        }        
     }
 
     /**
@@ -184,7 +252,64 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: refresh the list
      */
     async function deleteRecipe() {
-        // Implement delete logic here
+        // Get values from delete form inputs
+        const recipeName = deleteRecipeForm.name.value;
+
+        // Validate neither field is empty
+        if (recipeName.trim() === "") {
+            alert("Update name field cannot be empty");
+            return;
+        }
+
+        // Fetch current recipes to locate the recipe by name
+        /*await getRecipes();
+        const recipe = recipes.find(r => r.name === recipeName);
+        console.log(recipe);
+        // If no such recipe exists, warn the user
+        if (recipe === undefined) {
+            alert("Cannot delete recipe.  No recipe with that name exists");
+            return;
+        }*/
+
+        // Create the request
+        const requestOptions = {
+            method: "DELETE",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer"
+        };
+
+        try {
+            // Add the new recipe
+            const response = await fetch(`${BASE_URL}/recipes/${6}`, requestOptions);
+
+            switch (response.status) {
+                case 200:
+                    // Clear input fields
+                    deleteRecipeForm.name.value = "";
+
+                    // Refresh the list of recipes
+                    searchRecipes();
+                    
+                    break;
+                default:
+                    console.log(response);
+                    alert("Error deleting recipe.\nRequest returned with status " + response.status);
+                    break;
+            }
+        }
+        catch (e) {
+            console.log(e);
+            alert("An unexpected error occurred while deleting recipes");
+        } 
     }
 
     /**
@@ -193,7 +318,7 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Store in recipes array
      * - Call refreshRecipeList() to display
      */
-    async function getRecipes() {
+    async function getRecipes(refresh) {
         const requestOptions = {
             method: "GET",
             mode: "cors",
@@ -214,7 +339,7 @@ window.addEventListener("DOMContentLoaded", () => {
             recipes = await response.json();
             
             // Update the list of recipes
-            refreshRecipeList();
+            if (refresh) refreshRecipeList();
         }
         catch (e) {
             console.log(e);
