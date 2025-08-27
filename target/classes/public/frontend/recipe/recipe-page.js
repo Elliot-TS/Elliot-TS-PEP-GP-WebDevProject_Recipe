@@ -101,11 +101,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
             // Filter list by search name
             let recipes = await response.json();
-            recipes.filter(recipe => recipe.name.search(recipeName) != -1);
-
+            
             // Update the list of recipes
-            refreshRecipeList(recipes);
-
+            refreshRecipeList(
+                recipes.filter(recipe => recipe.name.search(recipeName) != -1)
+            );
         }
         catch (e) {
             console.log(e);
