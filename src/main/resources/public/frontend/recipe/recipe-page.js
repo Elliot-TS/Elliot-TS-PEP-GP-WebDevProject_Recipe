@@ -355,20 +355,20 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Append to list container
      */
     function refreshRecipeList() {
-        // Clear the recipe lsit
-        searchForm.resultList.innerHTML = "";
+            // Clear the recipe lsit
+            searchForm.resultList.innerHTML = "";
 
-        // Create recipes
-        for (let recipe of recipes) {
-            // Create list item
-            const listItem = document.createElement("li");
+            // Create recipes
+            for (let recipe of recipes) {
+                // Create list item
+                const listItem = document.createElement("li");
 
-            // Set the item's content
-            listItem.innerText = `${recipe.name}: ${recipe.instructions}`;
+                // Set the item's content
+                listItem.innerText = `${recipe.name}: ${recipe.instructions}`;
 
-            // Add the item to the list
-            searchForm.resultList.appendChild(listItem);
-        }
+                // Add the item to the list
+                searchForm.resultList.appendChild(listItem);
+            }
     }
 
     /**
