@@ -385,9 +385,8 @@ window.addEventListener("DOMContentLoaded", () => {
             headers: {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "Access-Control-Allow-Headers": "*",
-                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`
             }
         };
 
@@ -403,7 +402,7 @@ window.addEventListener("DOMContentLoaded", () => {
             }
             
             // Clear session storage
-            sessionStorage.removeItem("auth-key");
+            sessionStorage.removeItem("auth-token");
             sessionStorage.removeItem("is-admin");
             
             // Redirect to login
