@@ -1,7 +1,7 @@
-commit 6f1e570ed92c728ca5a597d1b026d96157bf3910
+commit 68783b0e6b5041228de85aa9366f1141d7d7afd2
 Author: Elliot-TS Swaim <elliotbb@believershome.com>
-Date:   Wed Aug 27 00:43:09 2025 +0000
+Date:   Wed Aug 27 01:22:25 2025 +0000
 
-    2: LoginTest passes
+    Working on 2 (logout) and 3. TODO: refreshRecipeList function in recipe-page.js and finish file
 
- 3 files changed, 12 insertions(+), 18 deletions(-)
+ 7 files changed, 182 insertions(+), 14 deletions(-)

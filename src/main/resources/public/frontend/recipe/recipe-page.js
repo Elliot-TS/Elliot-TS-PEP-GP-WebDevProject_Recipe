@@ -69,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
-    getRecipes();
+    //getRecipes();
 
 
     /**
@@ -86,17 +86,13 @@ window.addEventListener("DOMContentLoaded", () => {
         const requestOptions = {
             method: "GET",
             mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
             headers: {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "Access-Control-Allow-Headers": "*",
                 "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(requestBody)
+            }
         };
 
         try {
@@ -126,7 +122,53 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function addRecipe() {
-        // Implement add logic here
+        // Get the recipe name and instructions
+        const recipeName = addRecipeForm.name.value;
+        const recipeInstructions = addRecipeForm.instructions.innerText;
+        
+        // Validate inputs are non-empty
+        if (recipeName.trim() === "") {
+            alert("Recipe name cannot be empty");
+            return;
+        }
+        else if (recipeInstructions.trimEnd() === "") {
+            alert("Recipe instructions cannot be empty");
+            return;
+        }
+        
+        // Create the request
+        const requestOptions = {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": `Bearer ${sessionStorage.getItem("auto-token")}`
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(requestBody)
+        };
+
+        try {
+            // Add the new recipe
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            // Filter list by search name
+            let recipes = await response.json();
+            recipes.filter(recipe => recipe.name.search(recipeName) != -1);
+
+            // Update the list of recipes
+            refreshRecipeList(recipes);
+
+        }
+        catch (e) {
+            console.log(e);
+            alert("An unexpected error occurred while loading recipes");
+        }
     }
 
     /**
@@ -169,7 +211,20 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Append to list container
      */
     function refreshRecipeList(recipes) {
-        // Implement refresh logic here
+        // Clear the recipe lsit
+        searchForm.resultList.innerHTML = "";
+
+        // Create recipes
+        for (let recipe of recipes) {
+            // Create list item
+            const listItem = document.createElement("li");
+
+            // Set the item's content
+            listItem.innerText = `${recipe.name}: ${recipe.instructions}`;
+
+            // Add the item to the list
+            searchForm.resultList.appendChildd(listItem);
+        }
     }
 
     /**
