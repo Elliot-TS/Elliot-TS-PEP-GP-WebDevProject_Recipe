@@ -81,8 +81,7 @@ async function processLogin() {
 
     try {
         // TODO: Send POST request to http://localhost:8081/login using fetch with requestOptions
-        const response = fetch(`${BASE_URL}/login`, requestOptions);
-
+        const response = await fetch(`${BASE_URL}/login`, requestOptions);
         // TODO: If response status is 200
         // - Read the response as text
         // - Response will be a space-separated string: "token123 true"
@@ -101,15 +100,13 @@ async function processLogin() {
         // - Alert the user with a generic error like "Unknown issue!"
         switch (response.status) {
             case 200:
-                const responseArray = (await response.text()).split();
-                const token = responseArray[0];
-                const isAdmin = responseArray[1];
-                sessionStorage.setItem("token", token);
-                sessionStorage.setItem("isAdmin", isAdmin);
                 setTimeout(function() { 
                         location.href = '../recipe/recipe-page.html';
                         location.replace("../recipe/recipe-page.html");
                     }, 500);
+                const [token, isAdmin] = (await response.text()).split(" ");
+                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("isAdmin", isAdmin);
                 break;
             case 401:
                 alert("Incorrect login!");

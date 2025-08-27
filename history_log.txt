@@ -1,7 +1,7 @@
-commit 3cd8e3a541d185e620d155135250a8d60513f352
+commit a503c142dfba09ac775e3bc02cc6f42ad0c5c5f3
 Author: Elliot-TS Swaim <elliotbb@believershome.com>
-Date:   Tue Aug 26 22:26:24 2025 +0000
+Date:   Wed Aug 27 00:26:39 2025 +0000
 
-    Updated fetch url  to include BASE_URL variable
+    Working on login
 
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 8 files changed, 119 insertions(+), 10 deletions(-)
