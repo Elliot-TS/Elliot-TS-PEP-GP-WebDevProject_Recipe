@@ -11,11 +11,15 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - login button
  * - logout button (optional, for token testing)
  */
+let usernameInput = document.getElementById("login-input");
+let passwordInput = document.getElementById("password-input");
+let loginButton = document.getElementById("login-button");
 
 /* 
  * TODO: Add click event listener to login button
  * - Call processLogin on click
  */
+loginButton.addEventListener("click", processLogin);
 
 
 /**
@@ -42,8 +46,23 @@ const BASE_URL = "http://localhost:8081"; // backend URL
 async function processLogin() {
     // TODO: Retrieve username and password from input fields
     // - Trim input and validate that neither is empty
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (username === "") {
+        alert("Username must not be empty or contain only whitespace");
+        return;
+    }
+    else if (password === "") {
+        alert("Password must not be empty or contain only whitespace");
+        return;
+    }
 
     // TODO: Create a requestBody object with username and password
+    const requestBody = {
+        username: username,
+        password: password
+    }
 
     const requestOptions = {
         method: "POST",
@@ -62,6 +81,7 @@ async function processLogin() {
 
     try {
         // TODO: Send POST request to http://localhost:8081/login using fetch with requestOptions
+        const response = fetch(`${BASE_URL}/login`, requestOptions);
 
         // TODO: If response status is 200
         // - Read the response as text
@@ -79,10 +99,31 @@ async function processLogin() {
 
         // TODO: For any other status code
         // - Alert the user with a generic error like "Unknown issue!"
+        switch (response.status) {
+            case 200:
+                const responseArray = (await response.text()).split();
+                const token = responseArray[0];
+                const isAdmin = responseArray[1];
+                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("isAdmin", isAdmin);
+                setTimeout(function() { 
+                        location.href = '../recipe/recipe-page.html';
+                        location.replace("../recipe/recipe-page.html");
+                    }, 500);
+                break;
+            case 401:
+                alert("Incorrect login!");
+                break;
+            default:
+                alert("Unknown issue!");
+                break;
+        }
 
     } catch (error) {
         // TODO: Handle any network or unexpected errors
         // - Log the error and alert the user
+        console.log(error);
+        alert("An unexpected error occurred");
     }
 }
 

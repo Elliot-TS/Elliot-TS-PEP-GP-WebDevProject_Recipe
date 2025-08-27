@@ -46,8 +46,8 @@ registerButton.addEventListener("click", processRegistration)
 async function processRegistration() {
     try {
         // Get form input
-        const username = usernameInput.value;
-        const email = emailInput.value;
+        const username = usernameInput.value.trim();
+        const email = emailInput.value.trim();
         const password = passwordInput.value;
         const repeatPassword = repeatPasswordInput.value;
 
@@ -81,12 +81,12 @@ async function processRegistration() {
             };
 
             // Submit the data
-            const request = await fetch(`http://localhost:8081/register`, requestOptions);
+            const response = await fetch(`${BASE_URL}/register`, requestOptions);
 
             // Check the status of the request
-            switch (request.status) {
+            switch (response.status) {
                 case 201:
-                    window.location.replace("../login/login-page.html");
+                    window.location.href = "../login/login-page.html";
                     break;
                 case 409:
                     alert("An account already exists for this username or email");
