@@ -4,6 +4,18 @@ import { httpRequest, validatePassword, validateUsername, validateEmail } from "
  * This script handles the login functionality for the Recipe Management Application.
  * It manages user authentication by sending login requests to the server and handling responses.
 */
+//const BASE_URL = "http://localhost:8081"; // backend URL
+
+/* 
+ * TODO: Get references to DOM elements
+ * - username input
+ * - password input
+ * - login button
+ * - logout button (optional, for token testing)
+ */
+// let usernameInput = document.getElementById("login-input");
+// let passwordInput = document.getElementById("password-input");
+// let loginButton = document.getElementById("login-button");
 
 const loginForm = document.getElementById("login-form");
 
@@ -11,6 +23,7 @@ const loginForm = document.getElementById("login-form");
  * TODO: Add click event listener to login button
  * - Call processLogin on click
  */
+//loginButton.addEventListener("click", processLogin);
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     processLogin();
