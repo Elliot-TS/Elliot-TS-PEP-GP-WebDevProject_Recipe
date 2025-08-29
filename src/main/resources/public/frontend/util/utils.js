@@ -28,6 +28,7 @@ export function httpRequest(path, method, authToken, body, errorContext) {
     if (authToken !== undefined) { requestOptions.headers["Authorization"] = `Bearer ${auth-token}`; }
 
     try {
+        console.log(requestOptions);
         return fetch(`${BASE_URL}/${path}`, requestOptions);
     }
     catch (error) {
@@ -68,6 +69,6 @@ export function validatePassword(password) {
 }
 
 export function validateRegistrationPassword(password, confirmPassword) {
-    return validatePassword(password) &&
+    return valiatePassword(password) &&
            validateStringsMatch(password, confirmPassword, "Passwords");
 }
