@@ -1,4 +1,4 @@
-import { httpRequest, validatePassword, validateUsername, validateEmail } from "../util/utils.js";
+import { httpRequest, validateRegistrationPassword, validateUsername, validateEmail } from "../util/utils.js";
 
 /**
  * This script defines the registration functionality for the Registration page in the Recipe Management Application.
