@@ -47,7 +47,7 @@ Returns: whether the input string is empty and alerts if not
 */
 function validateNonEmptyString(string, what) {
     // Returns whether the string is emtpy and alerts the user if not
-    return  string.trim().length !== 0 ||
+    return  (string !== undefined && string !== null && string.trim().length !== 0) ||
             alert(`${what} cannot be empty (or consist of only whitespace)`) !== undefined;
 }
 
@@ -64,7 +64,11 @@ export function validateUsername(username) {
     return validateNonEmptyString(username, "Username field");
 }
 
-export function validatePassword(password, confirmPassword) {
-    return validateNonEmptyString(password, "Password field") &&
+export function validatePassword(password) {
+    return validateNonEmptyString(password, "Password field")
+}
+
+export function validateRegistrationPassword(password, confirmPassword) {
+    return valiatePassword(password) &&
            validateStringsMatch(password, confirmPassword, "Passwords");
 }

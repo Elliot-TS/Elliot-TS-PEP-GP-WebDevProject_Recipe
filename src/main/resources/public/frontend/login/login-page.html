@@ -9,28 +9,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Recipe Management App</title>
+
+    
+    <!-- Link JS script -->
+    <script src="login-page.js" type="module"></script>
 </head>
 <body>
 
     <!-- TODO: Add main heading for the page -->
-     <h1>Login</h1>
+    <h1>Login</h1>
+    <form id="login-form" method="post">
+        <!-- TODO: Create an input field for username -->
+        <!-- - Use <input> with id="login-input" and appropriate placeholder -->
+        <label for="username">Username</label>
+        <input id="login-input" type="text" name="username" placeholder="Username" />
 
-    <!-- TODO: Create an input field for username -->
-    <!-- - Use <input> with id="login-input" and appropriate placeholder -->
-    <input id="login-input" type="text" placeholder="Username" />
+        <!-- TODO: Create an input field for password -->
+        <!-- - Use <input type="password"> with id="password-input" -->
+        <label for="password">Password</label>
+        <input id="password-input" name="password" type="password" />
 
-    <!-- TODO: Create an input field for password -->
-    <!-- - Use <input type="password"> with id="password-input" -->
-    <input id="password-input" type="password" />
+        <!-- TODO: Create a login button -->
+        <!-- - Use <button> with id="login-button" -->
+        <input id="login-button" type="submit" value="Login" />
 
-    <!-- TODO: Create a login button -->
-    <!-- - Use <button> with id="login-button" -->
-    <button id="login-button">Login</button>
-
-    <!-- TODO: Add an optional hidden logout button with id="logout-button" -->
-    <!-- - Can be revealed if needed during token testing or logout support -->
-
-    <!-- Link JS script -->
-    <script src="login-page.js"></script>
+        <!-- TODO: Add an optional hidden logout button with id="logout-button" -->
+        <!-- - Can be revealed if needed during token testing or logout support -->
+    </form>
 </body>
 </html>

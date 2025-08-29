@@ -46,6 +46,8 @@ registrationForm.addEventListener("submit", (event) => {
 async function processRegistration() {
     const formData = new FormData(registrationForm)
     if (!validateRegistrationFormInputs(formData)) { return; }
+
+    formData.delete("confirm-password");
     
     const response = await httpRequest(
         "register", 
@@ -57,7 +59,7 @@ async function processRegistration() {
     
     switch (response.status) {
         case 201:
-            window.location.href = "../login/login-page.html";
+            setTimeout(() => window.location.href = "../login/login-page.html", 500);
             break;
         case 409:
             alert("An account already exists for this username or email");
@@ -73,5 +75,5 @@ async function processRegistration() {
 function validateRegistrationFormInputs(formData) {
     return  validateUsername(formData.get("username")) &&
             validateEmail(formData.get("email")) &&
-            validatePassword(formData.get("password"), formData.get("confirm-password"));
+            validateRegistrationPassword(formData.get("password"), formData.get("confirm-password"));
 }
