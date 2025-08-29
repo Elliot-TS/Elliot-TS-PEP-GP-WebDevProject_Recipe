@@ -1,23 +1,23 @@
-import { httpRequest, validatePassword, validateUsername, validateEmail } from "../util/utils.js";
-
 /**
  * This script defines the registration functionality for the Registration page in the Recipe Management Application.
  */
+
+const BASE_URL = "http://localhost:8081"; // backend URL
 
 /* 
  * TODO: Get references to various DOM elements
  * - usernameInput, emailInput, passwordInput, repeatPasswordInput, registerButton
  */
-const registrationForm = document.getElementById("registration-form");
+let usernameInput = document.getElementById("username-input");
+let emailInput = document.getElementById("email-input");
+let passwordInput = document.getElementById("password-input");
+let repeatPasswordInput = document.getElementById("repeat-password-input");
+let registerButton = document.getElementById("register-button");
 
 /* 
  * TODO: Ensure the register button calls processRegistration when clicked
  */
-// registerButton.addEventListener("click", processRegistrationOld)
-registrationForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    processRegistration();
-});
+registerButton.addEventListener("click", processRegistration)
 
 
 /**
@@ -29,7 +29,7 @@ registrationForm.addEventListener("submit", (event) => {
  * - Check that password and repeat password match
  * - Create a request body with username, email, and password
  * - Define requestOptions using method POST and proper headers
- * Cannot use import statement outside a module
+ * 
  * Fetch Logic:
  * - Send POST request to `${BASE_URL}/register`
  * - If status is 201:
@@ -42,36 +42,62 @@ registrationForm.addEventListener("submit", (event) => {
  * Error Handling:
  * - Wrap in try/catch
  * - Log error and alert user
-*/
+ */
 async function processRegistration() {
-    const formData = new FormData(registrationForm)
-    if (!validateRegistrationFormInputs(formData)) { return; }
-    
-    const response = await httpRequest(
-        "register", 
-        "POST", 
-        undefined,
-        JSON.stringify(Object.fromEntries(formData.entries())),
-        "registering account"
-    );
-    
-    switch (response.status) {
-        case 201:
-            window.location.href = "../login/login-page.html";
-            break;
-        case 409:
-            alert("An account already exists for this username or email");
-            break;
-        default:
-            alert("Something went wrong creating your account");
-            break;
+    try {
+        // Get form input
+        const username = usernameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const repeatPassword = repeatPasswordInput.value;
+
+        // Validate inputs are non-empty and passwords match
+        if (username === "") { alert("Username field must not be empty"); }
+        else if (email === "") { alert("Email field must not be empty"); }
+        else if (password === "") { alert("Password field must not be empty"); }
+        else if (password !== repeatPassword) { alert("Password fields must match"); }
+        else {
+            // Create the request body
+            const registerBody = {
+                username: username,
+                email: email,
+                password: password
+            };
+
+            // Create the full request
+            const requestOptions = {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(registerBody)
+            };
+
+            // Submit the data
+            const response = await fetch(`${BASE_URL}/register`, requestOptions);
+
+            // Check the status of the request
+            switch (response.status) {
+                case 201:
+                    window.location.href = "../login/login-page.html";
+                    break;
+                case 409:
+                    alert("An account already exists for this username or email");
+                    break;
+                default:
+                    alert("Something went wrong creating your account");
+                    break;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        alert("There was an error: " + error);
     }
-}
-
-
-
-function validateRegistrationFormInputs(formData) {
-    return  validateUsername(formData.get("username")) &&
-            validateEmail(formData.get("email")) &&
-            validatePassword(formData.get("password"), formData.get("confirm-password"));
 }
